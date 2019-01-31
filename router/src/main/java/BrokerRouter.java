@@ -20,6 +20,6 @@ public class BrokerRouter extends Server {
 
     @Override
     public void messageRead(ChannelHandlerContext ctx, String message) {
-
+        System.out.print("Router read message from broker: " + message );
     }
 }

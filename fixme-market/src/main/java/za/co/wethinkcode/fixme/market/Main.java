@@ -1,10 +1,10 @@
-package za.co.wethinkcode.fixme.broker;
+package za.co.wethinkcode.fixme.market;
 
 import za.co.wethinkcode.fixme.core.client.Client;
 
 public class Main {
     public static void main(String[] args){
-        Client brokerClient = new BrokerClient(5001);
-        brokerClient.run();
+        Client marketClient = new MarketClient(5000);
+        marketClient.run();
     }
 }

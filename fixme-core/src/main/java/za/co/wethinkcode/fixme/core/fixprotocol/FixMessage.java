@@ -12,6 +12,8 @@ public class FixMessage {
     public String instrument;
     public double price;
     public String quantity;
+    public String senderCompId;
+    public String text;
 
     public void setTargetComputer(String targetComputer) {
         this.targetComputer = targetComputer;
@@ -33,11 +35,20 @@ public class FixMessage {
         map.put(78, quantity);
     }
 
+
+    public void setText(String text) {
+        this.text = text;
+        map.put(107, text);
+    }
+
     public void setPrice(double price) {
         this.price = price;
         map.put(102, String.valueOf(price));
     }
-
+    public void setSenderCompID(String senderCompId) {
+        this.senderCompId = senderCompId;
+        map.put(56, senderCompId);
+    }
 
     public String encode(){
         StringBuilder builder = new StringBuilder();
@@ -59,13 +70,18 @@ public class FixMessage {
             String value = tagAndValue[1];
 
             switch (tag){
-                case 35 : fixMessage.setMessageType(value);
-                case 45 : fixMessage.setTargetComputer(value);
-                case 67 : fixMessage.setInstrument(value);
-                case 78 : fixMessage.setQuantity(value);
+                case 35 : fixMessage.setMessageType(value); break;
+                case 45 : fixMessage.setTargetComputer(value); break;
+                case 56 : fixMessage.setSenderCompID(value); break;
+                case 67 : fixMessage.setInstrument(value); break;
+                case 78 : fixMessage.setQuantity(value); break;
                 case 102 : fixMessage.setPrice(Double.parseDouble(value));
+                case 107 : fixMessage.setText(value);
+
             }
         }
         return fixMessage;
     }
+
+
 }

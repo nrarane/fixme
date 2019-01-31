@@ -1,10 +1,9 @@
-package za.co.wethinkcode.fixme.broker.handlers;
+package za.co.wethinkcode.fixme.market.handlers;
 
-import com.sun.corba.se.pept.broker.Broker;
 import io.netty.channel.ChannelHandlerContext;
-import za.co.wethinkcode.fixme.broker.BrokerClient;
 import za.co.wethinkcode.fixme.core.client.Client;
 import za.co.wethinkcode.fixme.core.fixprotocol.FixMessage;
+import za.co.wethinkcode.fixme.market.MarketClient;
 
 public abstract class  IMessageHandler {
     private IMessageHandler successor;
@@ -13,11 +12,11 @@ public abstract class  IMessageHandler {
         this.successor = successor;
     }
 
-    void next(ChannelHandlerContext ctx, FixMessage message, BrokerClient client) {
+    void next(ChannelHandlerContext ctx, FixMessage message, MarketClient client) {
         if (successor != null){
             successor.process(ctx, message, client);
         }
     }
 
-    public abstract void process(ChannelHandlerContext channelHandlerContext, FixMessage message, BrokerClient client);
+    public abstract void process(ChannelHandlerContext channelHandlerContext, FixMessage message, MarketClient client);
 }

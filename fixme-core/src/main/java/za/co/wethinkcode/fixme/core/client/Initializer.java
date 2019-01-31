@@ -1,4 +1,4 @@
-package za.co.wethinkcode.fixme.broker;
+package za.co.wethinkcode.fixme.core.client;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -7,13 +7,12 @@ import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
-import za.co.wethinkcode.fixme.broker.handlers.BrokerClientHandler;
 
-public class BrokerInitializer extends ChannelInitializer<SocketChannel> {
+public class Initializer extends ChannelInitializer<SocketChannel> {
 
-    private BrokerClient client;
+    private Client client;
 
-    public BrokerInitializer(BrokerClient client) {
+    public Initializer(Client client) {
         this.client = client;
     }
 
@@ -26,6 +25,6 @@ public class BrokerInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast(new StringDecoder());
         pipeline.addLast(new StringEncoder());
 
-        pipeline.addLast(new BrokerClientHandler(client));
+        pipeline.addLast(new ClientHandler(client));
     }
 }

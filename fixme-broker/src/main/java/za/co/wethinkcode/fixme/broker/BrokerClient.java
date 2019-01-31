@@ -1,48 +1,16 @@
 package za.co.wethinkcode.fixme.broker;
 
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.channel.ChannelHandlerContext;
+import za.co.wethinkcode.fixme.broker.handlers.IMessageHandler;
+import za.co.wethinkcode.fixme.broker.handlers.IdHandler;
+import za.co.wethinkcode.fixme.core.client.Client;
 import za.co.wethinkcode.fixme.core.fixprotocol.FixMessage;
 
 import java.util.Scanner;
 
-
-public class BrokerClient implements Runnable{
-    public int id;
-    ChannelFuture lastChannel;
-
-    String HOST = "localhost";
-    int PORT;
-
-    BrokerClient(int port){
-        this.PORT = port;
-    }
-    public void initialize() {
-
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
-
-        try {
-            Bootstrap bootstrap = new Bootstrap();
-            bootstrap.group(workerGroup);
-            bootstrap.channel(NioSocketChannel.class);
-            bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
-            bootstrap.handler(new BrokerInitializer(this));
-
-            lastChannel = bootstrap.connect(HOST, PORT).sync();
-            lastChannel.channel().closeFuture().sync();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            workerGroup.shutdownGracefully();
-        }
-    }
-
-    public void run() {
-        initialize();
+public  class BrokerClient extends Client {
+    BrokerClient(int port) {
+        super(port);
     }
 
     public void startMainProgram() {
@@ -68,7 +36,9 @@ public class BrokerClient implements Runnable{
     private void requestNewSingleOrder(String market, String instrument, String quantity) {
         FixMessage fixMessage  = new FixMessage();
 
+        fixMessage.setMessageType("D");
         fixMessage.setTargetComputer(market);
+        fixMessage.setSenderCompID(String.valueOf(id));
         fixMessage.setInstrument(instrument);
         fixMessage.setQuantity(quantity);
         fixMessage.setPrice(1.1);
@@ -77,4 +47,14 @@ public class BrokerClient implements Runnable{
         lastChannel.channel().writeAndFlush(encodedFixMessage +"\r\n");
 
     }
+
+    @Override
+    public void messageRead(ChannelHandlerContext ctx, String message) {
+        FixMessage fixMessage = FixMessage.fromString(message);
+        IMessageHandler messageHandler = new IdHandler();
+
+        messageHandler.process(ctx, fixMessage, this);
+    }
+
+
 }
